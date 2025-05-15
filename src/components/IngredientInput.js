@@ -1,27 +1,43 @@
 // src/components/IngredientInput.js
 import React, { useState } from 'react';
 
-export default function IngredientInput({ onUpdate }) {
+export default function IngredientInput({ ingredients, onUpdate }) {
   const [input, setInput] = useState('');
 
   const handleAdd = () => {
     const trimmed = input.trim();
-    if (trimmed) {
-      onUpdate((prev) => [...new Set([...prev, trimmed])]);
+    if (trimmed && !ingredients.includes(trimmed)) {
+      onUpdate([...ingredients, trimmed]);
       setInput('');
     }
   };
 
+  const handleRemove = (item) => {
+    onUpdate(ingredients.filter(i => i !== item));
+  };
+
   return (
     <div>
-      <h3>냉장고에 있는 재료를 입력하세요</h3>
+      <h3>냉장고 재료 입력</h3>
       <input
-        type="text"
-        placeholder="예: 계란"
         value={input}
-        onChange={(e) => setInput(e.target.value)}
+        onChange={e => setInput(e.target.value)}
+        placeholder="예: 계란"
       />
       <button onClick={handleAdd}>추가</button>
+
+      <div className="refrigerator-list">
+        {ingredients.map((item, idx) => (
+          <span
+            key={idx}
+            className="refrigerator-item"
+            onClick={() => handleRemove(item)}
+            title="클릭해서 삭제"
+          >
+            ❌ {item}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
